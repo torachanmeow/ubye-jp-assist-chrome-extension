@@ -1,0 +1,191 @@
+/* YouTube 固有のスタイル。チャット翻訳、送信アシスト、STT 字幕、投票バナーの装飾。 */
+
+/* === チャット翻訳 === */
+
+.ytc-translated {
+  display: block;
+  background-color: #1a1a1a !important;
+  color: #fff !important;
+  font-size: 0.85em;
+  margin-top: 2px;
+  padding: 2px 6px;
+  border-radius: 2px;
+  line-height: 1.4;
+}
+
+.ytc-translated::before {
+  content: "[JP] ";
+  font-style: normal;
+  color: #888;
+  font-size: 0.85em;
+}
+
+.ytc-translating {
+  display: block;
+  color: #666;
+  font-size: 0.85em;
+  margin-top: 2px;
+  font-style: italic;
+}
+
+.ytc-translating::before {
+  content: "\231b ";
+  font-style: normal;
+}
+
+.ytc-translate-error {
+  display: block;
+  color: #e57373;
+  font-size: 0.75em;
+  margin-top: 2px;
+  opacity: 0.8;
+}
+
+.ytc-send-btn {
+  background: rgba(106, 183, 255, 0.15);
+  border: 1px solid rgba(106, 183, 255, 0.3);
+  border-radius: 4px;
+  cursor: pointer;
+  padding: 4px 10px;
+  color: #6ab7ff;
+  transition: background 0.2s, color 0.2s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  vertical-align: middle;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1;
+  margin-right: 8px;
+}
+
+yt-live-chat-message-buy-flow-renderer #picker-buttons {
+  display: flex !important;
+  align-items: center !important;
+  gap: 4px;
+}
+
+yt-live-chat-message-buy-flow-renderer #picker-buttons .ytc-send-btn {
+  margin-right: 0;
+  padding: 6px 12px;
+}
+
+.ytc-send-btn:hover {
+  background: rgba(106, 183, 255, 0.3);
+  color: #fff;
+}
+
+.ytc-poll-translate-btn {
+  background: #1a73e8;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1;
+  margin-left: 8px;
+  transition: background 0.2s;
+}
+.ytc-poll-translate-btn:hover { background: #1565c0; }
+
+.ytc-poll-translate-btn:disabled {
+  background: #555;
+  cursor: default;
+}
+
+.ytc-send-btn:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+.ytc-send-btn.ytc-send-active {
+  background: rgba(255, 213, 79, 0.2);
+  border-color: rgba(255, 213, 79, 0.4);
+  color: #ffd54f;
+}
+
+.ytc-translate-visible-btn {
+  background: #1a73e8;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 4px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.ytc-translate-visible-btn:hover { background: #1565c0; }
+
+.ytc-translate-visible-btn:disabled {
+  background: #555;
+  cursor: default;
+}
+
+.ytc-translate-visible-btn-inline {
+  margin-left: 8px;
+  margin-right: 12px;
+  min-width: 100px;
+  text-align: center;
+}
+
+.ytc-chat-translate-bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+}
+
+.ytc-chat-translate-bar .ytc-translate-visible-btn {
+  width: 120px;
+  text-align: center;
+}
+
+.ytc-translate-visible-btn.ytc-auto-on { background: #2e7d32; }
+.ytc-translate-visible-btn.ytc-auto-on:hover { background: #1b5e20; }
+.ytc-translate-visible-btn.ytc-auto-on:disabled { background: #555; }
+
+/* === 字幕ドック === */
+
+#ubye-stt-subtitle-dock {
+  position: absolute;
+  bottom: 3%;
+  left: 0;
+  right: 0;
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  pointer-events: none;
+  transition: bottom 0.3s ease;
+}
+
+#ubye-stt-subtitle-dock.ubye-subtitle-shifted {
+  bottom: calc(8% + 60px);
+}
+
+#ubye-subtitle-lines {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  width: 100%;
+}
+
+#ubye-subtitle-interim {
+  margin-top: 4px;
+}
+
+.ubye-subtitle-line {
+  transition: opacity 0.5s ease;
+  max-width: 90%;
+  word-wrap: break-word;
+}
+
+.ubye-subtitle-line.ubye-subtitle-fade {
+  opacity: 0;
+}
