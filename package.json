@@ -1,0 +1,20 @@
+{
+  "name": "ubye-jp-assist-chrome-extension",
+  "version": "1.0.0",
+  "description": "台湾 VTuber「悠白(Ubye)」の YouTube ライブ配信を日本語リスナーが楽しむために作った個人用 Chrome 拡張機能です。\r 配信者プリセットの切り替えで、他の言語の配信にも対応できます。",
+  "main": "popup.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/torachanmeow/ubye-jp-assist-chrome-extension.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/torachanmeow/ubye-jp-assist-chrome-extension/issues"
+  },
+  "homepage": "https://github.com/torachanmeow/ubye-jp-assist-chrome-extension#readme"
+}

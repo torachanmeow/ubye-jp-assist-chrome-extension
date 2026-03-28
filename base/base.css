@@ -1,0 +1,206 @@
+/* 汎用オーバーレイパネルと STT ログビューアの共通スタイル。 */
+
+/* === 汎用オーバーレイパネル === */
+
+#ubye-stt-overlay {
+  position: fixed;
+  width: 500px;
+  height: 200px;
+  min-width: 200px;
+  min-height: fit-content;
+  background: rgba(30, 30, 30, 0.8);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  z-index: 2147483647;
+  font-family: -apple-system, 'Segoe UI', sans-serif;
+  font-size: 20px;
+  color: #e0e0e0;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  user-select: none;
+  resize: both;
+}
+
+.ubye-overlay-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  background: rgba(255, 255, 255, 0.05);
+  cursor: grab;
+  flex-shrink: 0;
+}
+
+.ubye-overlay-header:active { cursor: grabbing; }
+
+.ubye-overlay-title {
+  font-weight: 600;
+  font-size: 12px;
+  color: #aaa;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ubye-overlay-status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #666;
+  flex-shrink: 0;
+}
+
+.ubye-stt-dot-active {
+  background: #4caf50;
+  box-shadow: 0 0 6px #4caf50;
+}
+
+.ubye-stt-dot-idle {
+  background: #666;
+}
+
+#ubye-stt-auto-translate,
+.ubye-overlay-minimize,
+.ubye-overlay-close {
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  color: #ccc;
+  padding: 4px 7px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition: background 0.2s, color 0.2s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 26px;
+  min-height: 26px;
+}
+#ubye-stt-auto-translate {
+  font-size: 13px;
+}
+#ubye-stt-auto-translate:hover,
+.ubye-overlay-minimize:hover,
+.ubye-overlay-close:hover {
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+}
+
+#ubye-stt-auto-translate.ubye-stt-btn-active {
+  background: rgba(76, 175, 80, 0.3);
+  color: #4caf50;
+}
+
+.ubye-overlay-body {
+  overflow-y: auto;
+  padding: 8px 10px;
+  flex: 1;
+  scroll-behavior: smooth;
+}
+
+.ubye-overlay-body.ubye-stt-hidden {
+  display: none !important;
+  padding: 0 !important;
+}
+
+.ubye-overlay-body::-webkit-scrollbar { width: 4px; }
+
+.ubye-overlay-body::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 2px;
+}
+
+.ubye-stt-line {
+  padding: 3px 0;
+  line-height: 1.5;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+.ubye-stt-line.ubye-stt-translated { color: #fff; }
+
+.ubye-stt-line.ubye-stt-pending {
+  color: #999;
+  font-style: italic;
+}
+
+.ubye-stt-original { color: #888; }
+
+.ubye-stt-error-msg {
+  color: #f44336;
+  font-size: 11px;
+  vertical-align: middle;
+}
+
+.ubye-stt-line.ubye-stt-idle { color: #b0b0b0; }
+
+.ubye-stt-translate-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(106, 183, 255, 0.15);
+  color: #6ab7ff;
+  border: 1px solid rgba(106, 183, 255, 0.3);
+  border-radius: 4px;
+  padding: 2px 6px;
+  margin-left: 8px;
+  cursor: pointer;
+  vertical-align: middle;
+  font-size: 12px;
+  line-height: 1;
+}
+
+.ubye-stt-translate-btn:hover {
+  background: rgba(106, 183, 255, 0.3);
+  color: #fff;
+}
+
+.ubye-stt-retranslate-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(180, 180, 180, 0.15);
+  color: #999;
+  border: 1px solid rgba(180, 180, 180, 0.3);
+  border-radius: 4px;
+  padding: 2px 6px;
+  margin-left: 8px;
+  cursor: pointer;
+  vertical-align: middle;
+  font-size: 11px;
+  line-height: 1;
+}
+
+.ubye-stt-retranslate-btn:hover {
+  background: rgba(180, 180, 180, 0.3);
+  color: #ccc;
+}
+
+#ubye-stt-interim {
+  color: #ffd54f;
+  font-style: italic;
+  min-height: 1.4em;
+  padding: 2px 0;
+  opacity: 0.9;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+/* リサイズハンドル */
+#ubye-stt-overlay::-webkit-resizer { background: transparent; }
+#ubye-stt-overlay::after {
+  content: "";
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+  width: 12px;
+  height: 12px;
+  border-right: 2px solid rgba(255, 255, 255, 0.25);
+  border-bottom: 2px solid rgba(255, 255, 255, 0.25);
+  pointer-events: none;
+}
