@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<style>
+  body { width: 400px; padding: 12px 16px; font-family: -apple-system, 'Segoe UI', sans-serif; font-size: 15px; background: #1a1a1a; color: #e0e0e0; }
+  h3 { margin: 0 0 10px; font-size: 18px; }
+  .section { margin-bottom: 12px; padding: 12px 14px; background: #222; border-radius: 8px; }
+  .section-title { font-size: 13px; color: #999; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+  label { display: block; margin-bottom: 3px; font-size: 14px; color: #ccc; }
+  input[type="password"], select {
+    width: 100%; padding: 6px 8px; box-sizing: border-box;
+    background: #2a2a2a; color: #e0e0e0; border: 1px solid #444; border-radius: 4px; font-size: 14px;
+    margin-bottom: 6px;
+  }
+  .row { display: flex; align-items: center; gap: 6px; }
+  .check-row { display: flex; align-items: center; gap: 6px; font-size: 15px; }
+  .check-row input { width: auto; margin: 0; }
+  .range-row { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; padding-left: 22px; }
+  .range-row label { margin: 0; white-space: nowrap; width: 120px; flex-shrink: 0; font-size: 14px; color: #ccc; }
+  .range-row input[type="range"] { flex: 1; margin: 0; }
+  .range-row .val { font-size: 14px; color: #e0c97f; width: 48px; flex-shrink: 0; text-align: right; font-weight: 600; }
+  button { padding: 6px 14px; cursor: pointer; background: #3a3a3a; color: #e0e0e0; border: 1px solid #555; border-radius: 4px; font-size: 14px; }
+  button:hover { background: #4a4a4a; }
+  button:disabled { opacity: 0.5; cursor: default; pointer-events: none; }
+  .btn-primary { background: #1a73e8; color: #fff; border: none; padding: 7px 16px; font-weight: 600; width: 100px; text-align: center; }
+  .btn-primary:disabled { background: #555; }
+  .btn-stop { background: #2e7d32; color: #fff; border: none; padding: 7px 16px; font-weight: 600; width: 100px; text-align: center; }
+  .status { font-size: 14px; color: #e0c97f; transition: opacity 0.5s; }
+  .feature-row { display: flex; align-items: center; gap: 6px; margin-bottom: 6px; }
+  .feature-row input[type="checkbox"] { width: auto; margin: 0; flex-shrink: 0; }
+  .feature-row .feature-label { flex: 1; font-size: 15px; }
+  .feature-row select { width: auto; min-width: 130px; margin: 0; padding: 4px 6px; font-size: 13px; }
+  .feature-desc { font-size: 12px; color: #e0c97f; margin: -2px 0 10px 22px; line-height: 1.4; }
+</style>
+</head>
+<body>
+<h3>Ubye JP Assist</h3>
+<div id="pageNotice" style="display:none;font-size:12px;color:#e0c97f;background:#332b00;padding:6px 10px;border-radius:6px;margin-bottom:10px;line-height:1.4">このページでは字幕機能のみ利用できます</div>
+
+<div class="section">
+  <div class="feature-row">
+    <span class="feature-label">言語プロファイル</span>
+    <select id="profile"></select>
+  </div>
+  <div class="feature-desc">配信者の言語に合わせて音声認識と翻訳を最適化します</div>
+  <div class="feature-row">
+    <button id="sttStart" class="btn-primary">開始</button>
+    <button id="sttStop" class="btn-stop" style="display:none">停止</button>
+    <span id="sttStatus" class="status" style="margin-left:4px"></span>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title">表示設定</div>
+  <div class="feature-row">
+    <input id="sttLogVisible" type="checkbox">
+    <span class="feature-label">ログビューアを表示</span>
+    <button id="sttClearLog">ログクリア</button>
+  </div>
+  <div class="feature-desc">音声認識の履歴をパネルで確認できます</div>
+  <div class="range-row">
+    <label>文字サイズ（字幕）</label>
+    <input id="subtitleFontSize" type="range" min="14" max="48" step="1">
+    <span id="subtitleFontSizeVal" class="val">22px</span>
+  </div>
+  <div class="range-row">
+    <label>文字サイズ（ログ）</label>
+    <input id="logFontSize" type="range" min="10" max="24" step="1">
+    <span id="logFontSizeVal" class="val">14px</span>
+  </div>
+  <div class="range-row">
+    <label>表示時間（字幕）</label>
+    <input id="subtitleFadeTime" type="range" min="5" max="60" step="1">
+    <span id="subtitleFadeTimeVal" class="val">20秒</span>
+  </div>
+  <div class="range-row">
+    <label>表示行数（ログ）</label>
+    <input id="sttMaxLines" type="range" min="5" max="100" step="5">
+    <span id="sttMaxLinesVal" class="val">50行</span>
+  </div>
+  <div class="range-row">
+    <label>不透明度（字幕）</label>
+    <input id="sttBgOpacity" type="range" min="0" max="100" step="5">
+    <span id="sttBgOpacityVal" class="val">80%</span>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title">機能・モデル設定</div>
+  <div class="feature-row">
+    <input id="speechAutoTranslate" type="checkbox">
+    <span class="feature-label">音声翻訳</span>
+    <select id="speechModel"></select>
+  </div>
+  <div class="feature-desc">音声認識した内容を自動で日本語に翻訳します</div>
+  <div id="youtubeOnlySection">
+    <div class="feature-row">
+      <input id="chatTranslateEnabled" type="checkbox">
+      <span class="feature-label">チャット翻訳</span>
+      <select id="chatModel"></select>
+    </div>
+    <div class="feature-desc">ライブチャット・動画コメント欄を日本語に翻訳します</div>
+    <div class="range-row" style="margin-bottom:8px">
+      <label>自動間隔</label>
+      <input id="chatAutoInterval" type="range" min="0" max="120" step="5">
+      <span id="chatAutoIntervalVal" class="val">OFF</span>
+    </div>
+    <div class="feature-desc">秒数を設定すると自動で定期翻訳します（OFFは手動のみ）</div>
+    <div class="range-row" style="margin-bottom:8px">
+      <label>一括翻訳件数</label>
+      <input id="batchChunkSize" type="range" min="10" max="100" step="10">
+      <span id="batchChunkSizeVal" class="val">50件</span>
+    </div>
+    <div class="feature-desc">1回のAPI呼び出しで翻訳する件数（多いほど高速だが精度が下がる場合あり）</div>
+    <div class="feature-row">
+      <input id="sendEnabled" type="checkbox">
+      <span class="feature-label">送信アシスト</span>
+      <select id="sendModel"></select>
+    </div>
+    <div class="feature-desc">入力コメントを配信者の言語に翻訳して入力欄にセットします（送信は自分で行います）</div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title">API設定</div>
+  <div class="feature-desc" style="margin-left:0">音声翻訳・チャット翻訳・送信アシストにはAPI Keyが必要です</div>
+  <label>Gemini API Key</label>
+  <input id="geminiApiKey" type="password" placeholder="すべての翻訳に使用">
+  <div class="row">
+    <button id="save" class="btn-primary">保存</button>
+    <span class="status" id="status"></span>
+  </div>
+</div>
+
+<script src="base/namespace.js"></script>
+<script src="base/message-types.js"></script>
+<script src="base/config.js"></script>
+<script src="profiles.js"></script>
+<script src="popup.js"></script>
+</body>
+</html>
