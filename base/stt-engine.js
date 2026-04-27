@@ -1,7 +1,10 @@
 // Web Speech API のラッパー。interim/final 判定、重複検知、自動再起動を担当。
 (function (Base) {
-  const STABLE_MS = 2000;
+  const STABLE_MS = 4000;
   const DEDUPE_HISTORY = 5;
+  const DEAD_DETECT_MS = 10000;
+  const AUDIO_RECENT_MS = 2000;
+  const DEAD_CHECK_INTERVAL_MS = 2000;
 
   Base.createSttEngine = function (options) {
     const broadcast = options.onBroadcast;
@@ -18,6 +21,31 @@
     let restartWindowStart = 0;
     const RESTART_LIMIT = 5;
     const RESTART_WINDOW_MS = 5000;
+    let lastResultTs = 0;
+    let lastAudioActiveTs = 0;
+    let deadCheckTimer = null;
+
+    function pokeAudioActive() {
+      lastAudioActiveTs = Date.now();
+    }
+
+    function startDeadCheck() {
+      stopDeadCheck();
+      lastResultTs = Date.now();
+      lastAudioActiveTs = 0;
+      deadCheckTimer = setInterval(() => {
+        if (status !== "listening") return;
+        const now = Date.now();
+        if (now - lastAudioActiveTs > AUDIO_RECENT_MS) return;
+        if (now - lastResultTs < DEAD_DETECT_MS) return;
+        try { recognition.abort(); } catch (_) {}
+      }, DEAD_CHECK_INTERVAL_MS);
+    }
+
+    function stopDeadCheck() {
+      clearInterval(deadCheckTimer);
+      deadCheckTimer = null;
+    }
 
     function setStatus(s) {
       if (status === s) return;
@@ -80,9 +108,11 @@
 
       recognition.onstart = () => {
         setStatus("listening");
+        startDeadCheck();
       };
 
       recognition.onresult = (event) => {
+        lastResultTs = Date.now();
         for (let i = event.resultIndex; i < event.results.length; i++) {
           const result = event.results[i];
           const transcript = result[0].transcript.trim();
@@ -114,6 +144,7 @@
 
       recognition.onend = () => {
         clearTimeout(stableTimer); stableTimer = null;
+        stopDeadCheck();
         if (manualStop) {
           setStatus("idle");
           if (wantRestart) {
@@ -200,6 +231,7 @@
       wantRestart = false;
       manualStop = true;
       clearTimeout(stableTimer); stableTimer = null;
+      stopDeadCheck();
       if (lastInterim) {
         emitFinal(lastInterim);
         lastInterim = "";
@@ -213,6 +245,6 @@
       return status;
     }
 
-    return { start, stop, restart, getStatus, setLang, setAudioTrack };
+    return { start, stop, restart, getStatus, setLang, setAudioTrack, pokeAudioActive };
   };
 })(UbyeBase);

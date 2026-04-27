@@ -13,6 +13,29 @@ const engine = Base.createSttEngine({
 let audioCtx = null;
 let capturedStream = null;
 let startingPromise = null;
+let audioAnalyser = null;
+let audioAnalyserBuf = null;
+let audioMonitorTimer = null;
+const AUDIO_RMS_THRESHOLD = 0.005;
+const AUDIO_MONITOR_INTERVAL_MS = 500;
+
+function startAudioMonitor() {
+  stopAudioMonitor();
+  if (!audioAnalyser) return;
+  audioMonitorTimer = setInterval(() => {
+    if (!audioAnalyser) return;
+    audioAnalyser.getFloatTimeDomainData(audioAnalyserBuf);
+    let sum = 0;
+    for (let i = 0; i < audioAnalyserBuf.length; i++) sum += audioAnalyserBuf[i] * audioAnalyserBuf[i];
+    const rms = Math.sqrt(sum / audioAnalyserBuf.length);
+    if (rms > AUDIO_RMS_THRESHOLD) engine.pokeAudioActive();
+  }, AUDIO_MONITOR_INTERVAL_MS);
+}
+
+function stopAudioMonitor() {
+  clearInterval(audioMonitorTimer);
+  audioMonitorTimer = null;
+}
 
 async function startWithStream(streamId) {
   if (startingPromise) await startingPromise;
@@ -23,7 +46,12 @@ async function startWithStream(streamId) {
       audio: { mandatory: { chromeMediaSource: "tab", chromeMediaSourceId: streamId } },
     });
     audioCtx = new AudioContext();
-    audioCtx.createMediaStreamSource(capturedStream).connect(audioCtx.destination);
+    const sourceNode = audioCtx.createMediaStreamSource(capturedStream);
+    sourceNode.connect(audioCtx.destination);
+    audioAnalyser = audioCtx.createAnalyser();
+    audioAnalyser.fftSize = 1024;
+    audioAnalyserBuf = new Float32Array(audioAnalyser.fftSize);
+    sourceNode.connect(audioAnalyser);
 
     const audioTrack = capturedStream.getAudioTracks()[0];
     if (!audioTrack) throw new Error("音声トラックが取得できません");
@@ -34,6 +62,7 @@ async function startWithStream(streamId) {
     };
     engine.setAudioTrack(audioTrack);
     engine.start();
+    startAudioMonitor();
   } catch (e) {
     chrome.runtime.sendMessage({
       type: MSG.STT_BROADCAST, subtype: "error",
@@ -46,6 +75,7 @@ async function startWithStream(streamId) {
 }
 
 function stopStream() {
+  stopAudioMonitor();
   engine.stop();
   engine.setAudioTrack(null);
   if (capturedStream) {
@@ -56,6 +86,8 @@ function stopStream() {
     audioCtx.close().catch((e) => log.debug("msg dropped:", e.message));
     audioCtx = null;
   }
+  audioAnalyser = null;
+  audioAnalyserBuf = null;
 }
 
 chrome.runtime.onMessage.addListener((msg) => {
