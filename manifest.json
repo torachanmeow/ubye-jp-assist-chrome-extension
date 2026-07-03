@@ -1,0 +1,55 @@
+{
+  "manifest_version": 3,
+  "name": "Ubye JP Assist",
+  "version": "1.0.0",
+  "description": "YouTube配信の字幕・チャット・コメントをリアルタイム翻訳し、日本語リスナーを支援する拡張機能",
+  "permissions": ["storage", "tabCapture", "offscreen", "activeTab", "alarms", "contextMenus", "webNavigation", "scripting"],
+  "host_permissions": [
+    "https://generativelanguage.googleapis.com/*"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png"
+    }
+  },
+  "background": {
+    "service_worker": "background/main.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://www.youtube.com/*"],
+      "all_frames": true,
+      "js": [
+        "vendor/opencc-cn2t.js",
+        "base/namespace.js",
+        "base/message-types.js",
+        "base/lang-detect.js",
+        "base/lang-rules.js",
+        "base/message-bus.js",
+        "base/overlay.js",
+        "base/config.js",
+        "base/translation-chrome.js",
+        "base/translation-dispatch.js",
+        "base/s2t-convert.js",
+        "base/toast.js",
+        "base/init-static.js",
+        "youtube/namespace.js",
+        "youtube/dom-utils.js",
+        "youtube/send.js",
+        "youtube/chat.js",
+        "youtube/comments.js",
+        "youtube/init-static.js",
+        "profiles.js"
+      ],
+      "css": ["base/base.css", "youtube/youtube.css"],
+      "run_at": "document_idle"
+    }
+  ],
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  }
+}

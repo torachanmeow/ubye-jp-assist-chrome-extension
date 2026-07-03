@@ -1,0 +1,36 @@
+/* 汎用サイト用の字幕ドックスタイル。画面下部に固定表示。 */
+
+#ubye-stt-subtitle-dock {
+  position: fixed;
+  bottom: 5%;
+  left: 0;
+  right: 0;
+  z-index: 2147483646;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  pointer-events: none;
+}
+
+#ubye-subtitle-lines {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  width: 100%;
+}
+
+#ubye-subtitle-interim {
+  margin-top: 4px;
+}
+
+.ubye-subtitle-line {
+  transition: opacity 0.5s ease;
+  max-width: 90%;
+  word-wrap: break-word;
+}
+
+.ubye-subtitle-line.ubye-subtitle-fade {
+  opacity: 0;
+}
